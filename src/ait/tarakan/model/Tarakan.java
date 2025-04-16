@@ -3,6 +3,7 @@ package ait.tarakan.model;
 import java.util.Random;
 
 public class Tarakan implements Runnable {
+    private static Object monitor = new Object();
     private static int distance;
     private static int minSleepTime = 2;
     private static int maxSleepTime = 5;
@@ -37,7 +38,7 @@ public class Tarakan implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < distance; i++) {
-            int sleepTime = minSleepTime + random.nextInt(maxSleepTime + 1 - minSleepTime);
+            int sleepTime = random.nextInt(minSleepTime, maxSleepTime + 1);
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -45,8 +46,10 @@ public class Tarakan implements Runnable {
             }
             System.out.println(name);
         }
-        if (winner == null) {
-            winner = name;
+        synchronized (monitor) {
+            if (winner == null) {
+                winner = name;
+            }
         }
     }
 }
